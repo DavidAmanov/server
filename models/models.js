@@ -2,9 +2,9 @@ const sequelize = require('../db.js')
 const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
-    id:{type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    email:{type: DataTypes.STRING, unique: true},
-    password:{type: DataTypes.STRING},
+    googleId:{type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false},
+    email:{type: DataTypes.STRING, unique: true, allowNull: false},
+    photo:{type: DataTypes.STRING, allowNull: false},
     role:{type: DataTypes.STRING, defaultValue: 'USER'}
 })
 

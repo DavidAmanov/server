@@ -17,7 +17,7 @@ class BasketProductController {
     async remove(req, res, next){
         try{
             const {basket_id, product_id} = req.body
-            const basketProduct = await BasketProduct.findOne({where:{basket_id, product_id}})
+            const basketProduct = await BasketProduct.findOne({where:{basketId: basket_id, productId: product_id}})
             await basketProduct.destroy()
             return res.json({ message: "Product removed from basket" })
         } catch (e){
@@ -27,8 +27,8 @@ class BasketProductController {
 
     async getBasketProducts(req, res, next){
         try{
-            const {basket_id} = req.params
-            const basketProduct = await BasketProduct.findAll({where:{basket_id}, include: [Product]})
+            const {basketId} = req.params
+            const basketProduct = await BasketProduct.findAll({where:{basketId: basketId}, include: [Product]})
             return res.json(basketProduct)
         } catch (e){
             next(ApiError.badRequest(e.message))
