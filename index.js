@@ -1,5 +1,7 @@
 require("dotenv").config()
 const express = require('express')
+const passport = require('./auth.js')
+const session = require('express-session')
 const sequelize = require('./db.js')
 const models = require('./models/models.js')
 const cors = require('cors')
@@ -12,9 +14,17 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+app.use(session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: true
+}))
+
 app.use(cors())
 app.use(express.json())
 app.use(express.static(path.resolve(__dirname, 'static')))
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(fileUpLoad({}))
 app.use('/api', router)
 
