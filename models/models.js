@@ -2,7 +2,7 @@ const sequelize = require('../db.js')
 const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
-    googleId:{type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false},
+    userId:{type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false},
     displayName:{type: DataTypes.STRING, allowNull: false},
     email:{type: DataTypes.STRING, unique: true, allowNull: false},
     photo:{type: DataTypes.STRING, allowNull: false},
@@ -26,13 +26,14 @@ const Category = sequelize.define('category', {
 })
 
 const Orders = sequelize.define('orders', {
-    id:{type:DataTypes.INTEGER, primaryKey: true},
+    id:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     userId:{type: DataTypes.STRING, allowNull: false},
-    status:{type:DataTypes.STRING}
+    status:{type:DataTypes.STRING},
+    addressId: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 const OrderItems = sequelize.define('order_items', {
-    id:{type:DataTypes.INTEGER, primaryKey:true},
+    id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
     orderId:{type:DataTypes.INTEGER},
     productId:{type:DataTypes.INTEGER},
     quantity:{type:DataTypes.INTEGER},
@@ -40,16 +41,16 @@ const OrderItems = sequelize.define('order_items', {
 })
 
 const Payments = sequelize.define('payments', {
-    id:{type:DataTypes.INTEGER, primaryKey:true},
+    id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
     orderId:{type:DataTypes.INTEGER},
-    method:{type:DataTypes.INTEGER},
-    status:{type:DataTypes.INTEGER},
+    method:{type:DataTypes.STRING},
+    status:{type:DataTypes.STRING},
     amount:{type:DataTypes.INTEGER}
 })
 
-const Address = sequelize.define('adresses', {
-    id:{type:DataTypes.INTEGER, primaryKey:true},
-    userId:{type:DataTypes.INTEGER},
+const Address = sequelize.define('address', {
+    id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
+    userId:{type:DataTypes.STRING},
     street:{type:DataTypes.STRING},
     city:{type:DataTypes.STRING},
     state:{type:DataTypes.STRING},
