@@ -1,6 +1,6 @@
 const ApiError = require('../error/ApiError')
 const jwt = require('jsonwebtoken')
-const {Basket} = require('../models/models')
+const {Cart} = require('../models/models')
 const passport = require('../auth')
 
 
@@ -32,9 +32,9 @@ class UserController {
                 if(err){
                     return next(ApiError.badRequest(err.message))
                 }
-                let basket = await Basket.findOne({where:{user_id: user.id}})
-                if(!basket){
-                    basket = await Basket.create({where:{user_id: user.id}})
+                let cart = await Cart.findOne({where:{user_id: user.id}})
+                if(!cart){
+                    cart = await Cart.create({where:{user_id: user.id}})
                 }
                 const token = generateJwt(user.id, user.mail, user.role);
                 return res.json({token})

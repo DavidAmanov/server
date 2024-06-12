@@ -1,6 +1,6 @@
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const {User, Basket} = require('./models/models')
+const {User, Cart} = require('./models/models')
 
 const adminEmails = [process.env.ADMIN1, process.env.ADMIN2]
 
@@ -36,7 +36,7 @@ passport.use(new GoogleStrategy({
                 photo: profile.photo,
                 role: isAdmin ? 'ADMIN' :'USER'
             })
-            await Basket.create({user_id: user.id})
+            await Cart.create({user_id: user.id})
         }
         return done(null, user)
     } catch(error){

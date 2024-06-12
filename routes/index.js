@@ -2,12 +2,12 @@ const Router = require('express')
 const router = new Router()
 const productRouter = require('./productRouter')
 const userRouter = require('./userRouter')
-const basketRouter = require('./basketRouter')
-const basketProductRouter = require('./basketProductRouter')
+const cartRouter = require('./cartRouter')
+const cartProductRouter = require('./cartProductRouter')
 
 router.use('/user', userRouter)
 router.use('/product', productRouter)
-router.use('/basket', basketRouter)
-router.use('/basketProduct', basketProductRouter)
+router.use('/cart', cartRouter)
+router.use('/cartProduct', cartProductRouter)
 
 module.exports = router
