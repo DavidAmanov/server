@@ -1,2 +1,3 @@
 .env
 postmanTest/
+node_modules/

@@ -1,6 +1,6 @@
 const ApiError = require('../error/ApiError')
 const jwt = require('jsonwebtoken')
-const {Cart} = require('../models/models')
+const {Cart, Favourites} = require('../models/models')
 const passport = require('../auth')
 
 
@@ -32,11 +32,15 @@ class UserController {
                 if(err){
                     return next(ApiError.badRequest(err.message))
                 }
-                let cart = await Cart.findOne({where:{user_id: user.id}})
+                let cart = await Cart.findOne({where:{userId: user.id}})
                 if(!cart){
-                    cart = await Cart.create({where:{user_id: user.id}})
+                    cart = await Cart.create({userId: user.userId})
                 }
-                const token = generateJwt(user.id, user.mail, user.role);
+                let favourite = await Favourites.findOne({where:{userId: user.id}})
+                if(!favourite){
+                    favourite = await Favourites.create({userId: user.userId})
+                }
+                const token = generateJwt(user.userId, user.mail, user.role);
                 return res.json({token})
             }
         )

@@ -5,7 +5,7 @@ class CartController {
     async create(req, res, next){
         try{
             const {user_id} = req.body
-            const cart = await Cart.create({user_id})
+            const cart = await Cart.create({userId: user_id})
             return res.json(cart)
         } catch (e){
             next(ApiError.badRequest(e.message))
@@ -13,10 +13,8 @@ class CartController {
     }
 
     async openCart(req, res){
-        const {user_id} = req.body
-        const cart = await Cart.findOne({
-            where: {user_id}
-        })
+        const {user_id} = req.params
+        const cart = await Cart.findOne({where: {userId: user_id}})
         return res.json(cart)
     }
 }
