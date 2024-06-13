@@ -4,3 +4,5 @@ const favouritesController = require('../controllers/favouritesController')
 const authMiddleware = require('../middleware/authMiddleware')
 
 router.get('/', authMiddleware, favouritesController.openFavourite)
+
+module.exports = router

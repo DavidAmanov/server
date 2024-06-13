@@ -12,6 +12,25 @@ const addressRouter = require('./addressRouter')
 const favouriteRouter = require('./favouriteRouter')
 const favouriteItemRouter = require('./favouriteItemRouter')
 
+/**
+ * @swagger
+ * /user:
+ *   get:
+ *     summary: Получить список пользователей
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: Список пользователей
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
+
+
+
 router.use('/user', userRouter)
 router.use('/product', productRouter)
 router.use('/cart', cartRouter)

@@ -2,7 +2,7 @@ const sequelize = require('../db.js')
 const {DataTypes} = require('sequelize')
 
 const User = sequelize.define('user', {
-    userId:{type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false},
+    user_id:{type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false},
     displayName:{type: DataTypes.STRING, allowNull: false},
     email:{type: DataTypes.STRING, unique: true, allowNull: false},
     photo:{type: DataTypes.STRING, allowNull: false},
@@ -27,14 +27,14 @@ const Category = sequelize.define('category', {
 
 const Orders = sequelize.define('orders', {
     id:{type:DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    userId:{type: DataTypes.STRING, allowNull: false},
+    user_id:{type: DataTypes.STRING, allowNull: false},
     status:{type:DataTypes.STRING},
-    addressId: {type: DataTypes.INTEGER, allowNull: false},
+    address_id: {type: DataTypes.INTEGER, allowNull: false},
 })
 
 const OrderItems = sequelize.define('order_items', {
     id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
-    orderId:{type:DataTypes.INTEGER},
+    order_id:{type:DataTypes.INTEGER},
     productId:{type:DataTypes.INTEGER},
     quantity:{type:DataTypes.INTEGER},
     price:{type:DataTypes.INTEGER}
@@ -42,7 +42,7 @@ const OrderItems = sequelize.define('order_items', {
 
 const Payments = sequelize.define('payments', {
     id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
-    orderId:{type:DataTypes.INTEGER},
+    order_id:{type:DataTypes.INTEGER},
     method:{type:DataTypes.STRING},
     status:{type:DataTypes.STRING},
     amount:{type:DataTypes.INTEGER}
@@ -50,7 +50,7 @@ const Payments = sequelize.define('payments', {
 
 const Address = sequelize.define('address', {
     id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
-    userId:{type:DataTypes.STRING, allowNull: false},
+    user_id:{type:DataTypes.STRING, allowNull: false},
     street:{type:DataTypes.STRING},
     city:{type:DataTypes.STRING},
     state:{type:DataTypes.STRING},
@@ -60,62 +60,62 @@ const Address = sequelize.define('address', {
 
 const Cart = sequelize.define('cart', {
     id:{type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    userId: { type: DataTypes.STRING, allowNull: false }
+    user_id: { type: DataTypes.STRING, allowNull: false }
 })
 
 const Favourites = sequelize.define('favourites', {
     id:{type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    userId:{type: DataTypes.STRING, allowNull: false}
+    user_id:{type: DataTypes.STRING, allowNull: false}
 })
 
 const CartProduct = sequelize.define('cart_product', {
     id:{type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    productId: { type: DataTypes.INTEGER, allowNull: false },
-    cartId: { type: DataTypes.INTEGER, allowNull: false },
+    product_id: { type: DataTypes.INTEGER, allowNull: false },
+    cart_id: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 }
 })
 
 const FavouriteProduct = sequelize.define('favourite_product', {
     id:{type: DataTypes.INTEGER, primaryKey: true},
-    productId:{type:DataTypes.INTEGER},
-    favouriteId:{type:DataTypes.INTEGER},
+    product_id:{type:DataTypes.INTEGER},
+    favourite_id:{type:DataTypes.INTEGER},
 })
 
-User.hasMany(Orders, { foreignKey: 'userId' });
-Orders.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Orders, { foreignKey: 'user_id' });
+Orders.belongsTo(User, { foreignKey: 'user_id' });
 
-Category.hasMany(Product, { foreignKey: 'categoryId' });
-Product.belongsTo(Category, { foreignKey: 'categoryId' });
+Category.hasMany(Product, { foreignKey: 'category_id' });
+Product.belongsTo(Category, { foreignKey: 'category_id' });
 
-Orders.hasMany(OrderItems, { foreignKey: 'orderId' });
-OrderItems.belongsTo(Orders, { foreignKey: 'orderId' });
+Orders.hasMany(OrderItems, { foreignKey: 'order_id' });
+OrderItems.belongsTo(Orders, { foreignKey: 'order_id' });
 
-Orders.hasOne(Payments, {foreignKey: 'orderId'})
-Payments.belongsTo(Orders, {foreignKey: 'orderId'})
+Orders.hasOne(Payments, {foreignKey: 'order_id'})
+Payments.belongsTo(Orders, {foreignKey: 'order_id'})
 
-Product.hasMany(OrderItems, { foreignKey: 'productId' });
-OrderItems.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(OrderItems, { foreignKey: 'product_id' });
+OrderItems.belongsTo(Product, { foreignKey: 'product_id' });
 
-User.hasMany(Address, { foreignKey: 'userId' });
-Address.belongsTo(User, { foreignKey: 'userId' });
+User.hasMany(Address, { foreignKey: 'user_id' });
+Address.belongsTo(User, { foreignKey: 'user_id' });
 
-User.hasOne(Cart, { foreignKey: 'userId' });
-Cart.belongsTo(User, { foreignKey: 'userId' });
+User.hasOne(Cart, { foreignKey: 'user_id' });
+Cart.belongsTo(User, { foreignKey: 'user_id' });
 
-Cart.hasMany(CartProduct, { foreignKey: 'cartId' });
-CartProduct.belongsTo(Cart, { foreignKey: 'cartId' });
+Cart.hasMany(CartProduct, { foreignKey: 'cart_id' });
+CartProduct.belongsTo(Cart, { foreignKey: 'cart_id' });
 
-Product.hasMany(CartProduct, { foreignKey: 'productId' });
-CartProduct.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(CartProduct, { foreignKey: 'product_id' });
+CartProduct.belongsTo(Product, { foreignKey: 'product_id' });
 
-User.hasOne(Favourites, { foreignKey: 'userId' });
-Favourites.belongsTo(User, { foreignKey: 'userId' });
+User.hasOne(Favourites, { foreignKey: 'user_id' });
+Favourites.belongsTo(User, { foreignKey: 'user_id' });
 
-Favourites.hasMany(FavouriteProduct, { foreignKey: 'favouriteId' });
-FavouriteProduct.belongsTo(Favourites, { foreignKey: 'favouriteId' });
+Favourites.hasMany(FavouriteProduct, { foreignKey: 'favourite_id' });
+FavouriteProduct.belongsTo(Favourites, { foreignKey: 'favourite_id' });
 
-Product.hasMany(FavouriteProduct, { foreignKey: 'productId' });
-FavouriteProduct.belongsTo(Product, { foreignKey: 'productId' });
+Product.hasMany(FavouriteProduct, { foreignKey: 'product_id' });
+FavouriteProduct.belongsTo(Product, { foreignKey: 'product_id' });
 
 module.exports = {
     User,
