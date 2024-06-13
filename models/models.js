@@ -50,7 +50,7 @@ const Payments = sequelize.define('payments', {
 
 const Address = sequelize.define('address', {
     id:{type:DataTypes.INTEGER, primaryKey:true, autoIncrement: true},
-    userId:{type:DataTypes.STRING},
+    userId:{type:DataTypes.STRING, allowNull: false},
     street:{type:DataTypes.STRING},
     city:{type:DataTypes.STRING},
     state:{type:DataTypes.STRING},
