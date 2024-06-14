@@ -3,7 +3,13 @@ const jwt = require('jsonwebtoken')
 const {Cart, Favourites} = require('../models/models')
 const passport = require('../auth')
 
-
+/**
+ * Generates a JWT token.
+ * @param {number} id - User ID.
+ * @param {string} email - User email.
+ * @param {string} role - User role.
+ * @returns {string} JWT token.
+ */
 const generateJwt = (id, email, role) => {
     return jwt.sign({id, email, role}, process.env.SECRET_KEY, {expiresIn: '24h'})
 }

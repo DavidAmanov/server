@@ -1,7 +1,5 @@
 require("dotenv").config()
 const express = require('express')
-const swaggerDocs = require('./swagger');
-const swaggerUi = require('swagger-ui-express');
 const passport = require('./auth.js')
 const session = require('express-session')
 const sequelize = require('./db.js')
@@ -28,8 +26,6 @@ app.use(express.static(path.resolve(__dirname, 'static')))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(fileUpLoad({}))
-app.use('/api', router)
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 //always on the bottom of use section
 app.use(errorHandler)
