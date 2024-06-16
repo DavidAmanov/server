@@ -3,7 +3,7 @@ const router = new Router
 const addressController = require('../controllers/addressController')
 
 router.post('/add', addressController.add)
-router.post('/remove', addressController.remove)
+router.delete('/remove', addressController.remove)
 router.get('/getAll/:user_id', addressController.getAddressesByUser)
 
 module.exports = router

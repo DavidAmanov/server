@@ -4,12 +4,12 @@ const ApiError = require('../error/ApiError')
 class PaymentsController{
     async create(req, res, next){
         try{
-            const {order_id, method, status, amount} = req.body
+            const {order_id, method_id, status, amount} = req.body
             const order = await Orders.findOne({where:{order_id: order_id}})
             if(!order){
                 return next(ApiError.badRequest("Can't find this order"))
             }
-            const payment = await Payments.create({orderId: order_id, method: method, status: status, amount: amount})
+            const payment = await Payments.create({orderId: order_id, methodId: method_id, status: status, amount: amount})
             return res.json(payment)
         } catch(e){
             return res.json(ApiError.badRequest(e.message))

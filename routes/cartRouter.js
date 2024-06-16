@@ -3,6 +3,6 @@ const router = new Router
 const cartController = require('../controllers/cartController')
 const authMiddleware = require('../middleware/authMiddleware')
 
-router.get('/',authMiddleware ,cartController.openCart)
+router.get('/getCart',authMiddleware ,cartController.openCart)
 
 module.exports = router 

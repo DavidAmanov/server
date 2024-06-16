@@ -4,7 +4,7 @@ const authMiddleware = require('../middleware/authMiddleware')
 const favouriteProductController = require('../controllers/favouriteProductController')
 
 router.post('/add',authMiddleware, favouriteProductController.add)
-router.post('/remove',authMiddleware, favouriteProductController.remove)
+router.delete('/remove',authMiddleware, favouriteProductController.remove)
 router.get('/:favouriteId', authMiddleware, favouriteProductController.getFavouriteProduct)
 
 

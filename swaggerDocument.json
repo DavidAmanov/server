@@ -1,0 +1,2048 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Merch Magazine",
+      "version": "1.0.0"
+    },
+    "tags": [
+      {
+        "name": "User",
+        "description": "User related endpoints"
+      },
+      {
+        "name": "Product",
+        "description": "Product related endpoints"
+      },
+      {
+          "name": "Order",
+          "description": "Order related endpoints"
+        },
+        {
+            "name": "Order Items",
+            "description": "OrderItems related endpoints"
+        }, 
+        {
+            "name": "Cart",
+            "description": "Cart related endpoints"
+        },
+        {
+            "name": "Cart Product",
+            "description": "ProductItem related endpoints"
+        },
+        {
+            "name": "Category",
+            "description": "Category related endpoints"
+        },
+        {
+            "name": "Favourite",
+            "description": "Favourite related endpoints"
+        },
+        {
+            "name": "Favourite Product",
+            "description": "Favourite Product related endpoints"
+        },
+        {
+            "name": "Payment",
+            "description": "Payment related endpoints"
+        },
+        {
+            "name": "Payment Method",
+            "description": "Payment related endpoints"
+        },
+        {
+            "name": "Address",
+            "description": "Address related endpoints"
+        }
+    ],
+    "paths": {
+      "/user/auth/google": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Authenticate with Google",
+        "description": "Initiates Google OAuth2 authentication",
+        "responses": {
+          "302": {
+            "description": "Redirect to Google OAuth2 authentication page"
+          }
+        }
+      }
+    },
+    "/user/auth/google/callback": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Google OAuth2 Callback",
+        "description": "Handles the callback from Google OAuth2 authentication",
+        "responses": {
+          "200": {
+            "description": "Successful authentication",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "jwt-token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "302": {
+            "description": "Redirect on failure"
+          }
+        }
+      }
+    },
+    "/user/check": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Check User Authentication",
+        "description": "Checks the authentication status of the user and returns a JWT",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful check",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "jwt-token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/create": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Create a new product",
+        "description": "Creates a new product. Only accessible by admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Product Name"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 100
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "AVAILABLE"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Product Description"
+                  },
+                  "img": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["name", "price", "status", "description", "img"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get all products",
+        "description": "Retrieves all products.",
+        "responses": {
+          "200": {
+            "description": "A list of products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/product/{id}": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get a product by ID",
+        "description": "Retrieves a product by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the product"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The product details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment/add": {
+      "post": {
+        "tags": ["Payment"],
+        "summary": "Create a new payment",
+        "description": "Creates a new payment record.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "method_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "completed"
+                  },
+                  "amount": {
+                    "type": "integer",
+                    "example": 100
+                  }
+                },
+                "required": ["order_id", "method_id", "status", "amount"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment/remove": {
+      "delete": {
+        "tags": ["Payment"],
+        "summary": "Remove a payment",
+        "description": "Removes an existing payment record.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "payment_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["payment_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Payment removed from database"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment/getAll": {
+      "get": {
+        "tags": ["Payment"],
+        "summary": "Get all payments",
+        "description": "Retrieves all payment records.",
+        "responses": {
+          "200": {
+            "description": "A list of payments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Payment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payment/getOne/{id}": {
+      "get": {
+        "tags": ["Payment"],
+        "summary": "Get a payment by ID",
+        "description": "Retrieves a payment record by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the payment"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The payment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Payment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paymentMethod/create": {
+      "post": {
+        "tags": ["Payment Method"],
+        "summary": "Create a new payment method",
+        "description": "Creates a new payment method.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Credit Card"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment method created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentMethod"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paymentMethod/remove": {
+      "delete": {
+        "tags": ["Payment Method"],
+        "summary": "Remove a payment method",
+        "description": "Removes an existing payment method.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Credit Card"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Payment method removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Method removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/paymentMethod/getAll": {
+      "get": {
+        "tags": ["Payment Method"],
+        "summary": "Get all payment methods",
+        "description": "Retrieves all payment methods.",
+        "responses": {
+          "200": {
+            "description": "A list of payment methods",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentMethod"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/create": {
+      "post": {
+        "tags": ["Order"],
+        "summary": "Create a new order",
+        "description": "Creates a new order.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "example": "user123"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "Pending"
+                  },
+                  "address_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["user_id", "status", "address_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/remove": {
+      "delete": {
+        "tags": ["Order"],
+        "summary": "Remove an order",
+        "description": "Removes an existing order.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "orders_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "example": "user123"
+                  },
+                  "address_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["orders_id", "user_id", "address_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Order removed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/getAll": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get all orders",
+        "description": "Retrieves all orders.",
+        "responses": {
+          "200": {
+            "description": "A list of orders",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Order"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/getOne/{id}": {
+      "get": {
+        "tags": ["Order"],
+        "summary": "Get an order by ID",
+        "description": "Retrieves a single order by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the order to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orderItem/add": {
+      "post": {
+        "tags": ["Order Items"],
+        "summary": "Add an item to an order",
+        "description": "Adds a product to an existing order.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 2
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 99.99
+                  }
+                },
+                "required": ["order_id", "product_id", "quantity", "price"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item added to order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orderItem/remove": {
+      "delete": {
+        "tags": ["Order Items"],
+        "summary": "Remove an item from an order",
+        "description": "Removes a product from an existing order.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 2
+                  }
+                },
+                "required": ["order_id", "product_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removed from order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Product removed from order"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orderItem/getItems/{order_id}": {
+      "get": {
+        "tags": ["Order Items"],
+        "summary": "Get items of an order",
+        "description": "Retrieves all items of a specific order.",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the order to retrieve items for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of order items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favourite": {
+      "get": {
+        "tags": ["Favourite"],
+        "summary": "Get favourite list",
+        "description": "Retrieves the favourite list of a user.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "The ID of the user to retrieve the favourite list for"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Favourite list retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Favourites"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/favourite/add": {
+      "post": {
+        "tags": ["Favourite"],
+        "summary": "Add to favourite list",
+        "description": "Adds a user to the favourite list.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["user_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User added to favourite list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Favourites"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favouriteProduct/add": {
+      "post": {
+        "tags": ["Favourite Product"],
+        "summary": "Add product to favourites",
+        "description": "Adds a product to the user's favourites list.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "favourites_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["favourites_id", "product_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product added to favourites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavouriteProduct"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/favouriteProduct/remove": {
+      "post": {
+        "tags": ["Favourite Product"],
+        "summary": "Remove product from favourites",
+        "description": "Removes a product from the user's favourites list.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "favourites_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["favourites_id", "product_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product removed from favourites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Product removed from Favourites"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/favouriteProduct/{favourites_id}": {
+      "get": {
+        "tags": ["Favourite Product"],
+        "summary": "Get products from favourites",
+        "description": "Retrieves products from the user's favourites list.",
+        "parameters": [
+          {
+            "name": "favourites_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The ID of the favourites list to retrieve products from"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved from favourites",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FavouriteProduct"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/category/add": {
+      "post": {
+        "tags": ["Category"],
+        "summary": "Add category",
+        "description": "Adds a new category.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Electronics"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/remove": {
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Remove category",
+        "description": "Removes a category by name.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Electronics"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Category successfully deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Category successfully deleted"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/getCategoryByName": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get category by name",
+        "description": "Retrieves a category by its name.",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Electronics"
+            },
+            "description": "The name of the category to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/getAllCategory": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get all categories",
+        "description": "Retrieves all categories.",
+        "responses": {
+          "200": {
+            "description": "Categories retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/create": {
+      "post": {
+        "tags": ["Cart"],
+        "summary": "Create cart",
+        "description": "Creates a new cart for a user.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["user_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cart created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cart/getCart/{user_id}": {
+      "get": {
+        "tags": ["Cart"],
+        "summary": "Get user's cart",
+        "description": "Retrieves the cart of a specific user.",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The ID of the user to retrieve the cart for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cartProduct/add": {
+      "post": {
+        "tags": ["Cart Product"],
+        "summary": "Add product to cart",
+        "description": "Adds a product to the user's cart.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cart_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["cart_id", "product_id", "quantity"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product added to cart successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CartProduct"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cartProduct/remove": {
+      "delete": {
+        "tags": ["Cart Product"],
+        "summary": "Remove product from cart",
+        "description": "Removes a product from the user's cart.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cart_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "product_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["cart_id", "product_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Product removed from cart successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Product removed from cart"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cartProduct/{cartId}": {
+      "get": {
+        "tags": ["Cart Product"],
+        "summary": "Get products in cart",
+        "description": "Retrieves all products in the user's cart.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "cartId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The ID of the cart to retrieve products from."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products in cart retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CartProduct"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address/add": {
+      "post": {
+        "tags": ["Address"],
+        "summary": "Add address",
+        "description": "Adds a new address for a user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "street": {
+                    "type": "string",
+                    "example": "123 Main St"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "City"
+                  },
+                  "state": {
+                    "type": "string",
+                    "example": "State"
+                  },
+                  "zip_code": {
+                    "type": "string",
+                    "example": "12345"
+                  },
+                  "country": {
+                    "type": "string",
+                    "example": "Country"
+                  }
+                },
+                "required": ["user_id", "street", "city", "state", "zip_code", "country"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Address added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Address"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address/remove": {
+      "delete": {
+        "tags": ["Address"],
+        "summary": "Remove address",
+        "description": "Removes an address associated with a user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "address_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["address_id", "user_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Address removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Address removed from user"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/address/getAll/{user_id}": {
+      "get": {
+        "tags": ["Address"],
+        "summary": "Get user addresses",
+        "description": "Retrieves all addresses associated with a user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "The ID of the user to retrieve addresses for."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Addresses retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "example": "user123"
+            },
+            "displayName": {
+              "type": "string",
+              "example": "John Doe"
+            },
+            "email": {
+              "type": "string",
+              "example": "john.doe@example.com"
+            },
+            "photo": {
+              "type": "string",
+              "example": "http://example.com/photo.jpg"
+            },
+            "role": {
+              "type": "string",
+              "example": "USER"
+            }
+          },
+          "required": ["userId", "displayName", "email", "photo"]
+        },
+        "Product": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "name": {
+              "type": "string",
+              "example": "Product Name"
+            },
+            "description": {
+              "type": "string",
+              "example": "Product Description"
+            },
+            "price": {
+              "type": "integer",
+              "example": 100
+            },
+            "img": {
+              "type": "string",
+              "example": "http://example.com/product.jpg"
+            },
+            "status": {
+              "type": "string",
+              "example": "AVAILABLE"
+            },
+            "categoryId": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          "required": ["name", "description", "price", "img", "status", "categoryId"]
+        },
+        "Category": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "name": {
+              "type": "string",
+              "example": "Category Name"
+            }
+          },
+          "required": ["name"]
+        },
+        "Order": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "userId": {
+              "type": "string",
+              "example": "user123"
+            },
+            "status": {
+              "type": "string",
+              "example": "PENDING"
+            },
+            "addressId": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          "required": ["userId", "addressId"]
+        },
+        "OrderItem": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "orderId": {
+              "type": "integer",
+              "example": 1
+            },
+            "productId": {
+              "type": "integer",
+              "example": 1
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 2
+            },
+            "price": {
+              "type": "integer",
+              "example": 200
+            }
+          },
+          "required": ["orderId", "productId", "quantity", "price"]
+        },
+        "Payment": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "orderId": {
+              "type": "integer",
+              "example": 1
+            },
+            "methodId": {
+              "type": "integer",
+              "example": 1
+            },
+            "status": {
+              "type": "string",
+              "example": "COMPLETED"
+            },
+            "amount": {
+              "type": "integer",
+              "example": 200
+            }
+          },
+          "required": ["orderId", "methodId", "amount"]
+        },
+        "PaymentMethod": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "name": {
+              "type": "string",
+              "example": "Credit Card"
+            }
+          },
+          "required": ["name"]
+        },
+        "Address": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "userId": {
+              "type": "string",
+              "example": "user123"
+            },
+            "street": {
+              "type": "string",
+              "example": "123 Main St"
+            },
+            "city": {
+              "type": "string",
+              "example": "Anytown"
+            },
+            "state": {
+              "type": "string",
+              "example": "CA"
+            },
+            "zipCode": {
+              "type": "string",
+              "example": "12345"
+            },
+            "country": {
+              "type": "string",
+              "example": "USA"
+            }
+          },
+          "required": ["userId"]
+        },
+        "Cart": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "userId": {
+              "type": "string",
+              "example": "user123"
+            }
+          },
+          "required": ["userId"]
+        },
+        "Favourite": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "userId": {
+              "type": "string",
+              "example": "user123"
+            }
+          },
+          "required": ["userId"]
+        },
+        "CartProduct": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "productId": {
+              "type": "integer",
+              "example": 1
+            },
+            "cartId": {
+              "type": "integer",
+              "example": 1
+            },
+            "quantity": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          "required": ["productId", "cartId", "quantity"]
+        },
+        "FavouriteProduct": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "example": 1
+            },
+            "productId": {
+              "type": "integer",
+              "example": 1
+            },
+            "favouriteId": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          "required": ["productId", "favouriteId"]
+        },
+        "ApiError": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "integer",
+              "example": 404
+            },
+            "message": {
+              "type": "string",
+              "example": "Resource not found"
+            }
+          }
+        }
+      }
+    },
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ]
+  }
+  
