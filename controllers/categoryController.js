@@ -28,7 +28,7 @@ class CategoryController {
 
     async getCategoryByName(req, res, next) {
         try {
-            const { name } = req.body;
+            const { name } = req.params;
             const category = await Category.findOne({ where: { name: name } });
             if (!category) {
                 return next(ApiError.badRequest("Can't find the category"));

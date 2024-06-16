@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/authMiddleware')
 
 router.get('/auth/google', userController.googleAuth)
 
-router.get('/auth/google/callback', userController.googleCallback)
+router.get('/auth/google/callback', userController.googleCallback) 
 
 router.get('/check',authMiddleware , userController.check)
 

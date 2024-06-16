@@ -5,7 +5,7 @@ const cartProductController = require('../controllers/cartProductController')
 
 router.post('/add',authMiddleware, cartProductController.add)
 router.delete('/remove',authMiddleware, cartProductController.remove)
-router.get('/:cartId', authMiddleware, cartProductController.getCartProducts)
+router.get('/:cart_Id', authMiddleware, cartProductController.getCartProducts)
 
 
 module.exports = router 

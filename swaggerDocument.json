@@ -4,6 +4,12 @@
       "title": "Merch Magazine",
       "version": "1.0.0"
     },
+    "servers": [
+    {
+      "url": "http://localhost:3001/api",
+      "description": "Production server"
+    }
+  ],
     "tags": [
       {
         "name": "User",
@@ -55,7 +61,7 @@
         }
     ],
     "paths": {
-      "/user/auth/google": {
+    "/user/auth/google": {
       "get": {
         "tags": ["User"],
         "summary": "Authenticate with Google",
@@ -161,7 +167,7 @@
                   },
                   "status": {
                     "type": "string",
-                    "example": "AVAILABLE"
+                    "example": "New"
                   },
                   "description": {
                     "type": "string",
@@ -170,6 +176,10 @@
                   "img": {
                     "type": "string",
                     "format": "binary"
+                  },
+                  "categoryId": {
+                    "type": "integer",
+                    "example": 1
                   }
                 },
                 "required": ["name", "price", "status", "description", "img"]
@@ -922,7 +932,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Favourites"
+                  "$ref": "#/components/schemas/Favourite"
                 }
               }
             }
@@ -1045,7 +1055,7 @@
       }
     },
     "/favouriteProduct/remove": {
-      "post": {
+      "delete": {
         "tags": ["Favourite Product"],
         "summary": "Remove product from favourites",
         "description": "Removes a product from the user's favourites list.",
@@ -1587,7 +1597,7 @@
                 "type": "object",
                 "properties": {
                   "user_id": {
-                    "type": "integer",
+                    "type": "string",
                     "example": 1
                   },
                   "street": {
@@ -1602,7 +1612,7 @@
                     "type": "string",
                     "example": "State"
                   },
-                  "zip_code": {
+                  "zipCode": {
                     "type": "string",
                     "example": "12345"
                   },
@@ -1717,8 +1727,8 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "string",
+              "example": "115541713904561796320"
             },
             "description": "The ID of the user to retrieve addresses for."
           }

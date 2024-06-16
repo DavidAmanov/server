@@ -2,8 +2,8 @@ const sequelize = require('../db.js');
 const { DataTypes } = require('sequelize');
 
 const User = sequelize.define('user', {
-    userId: { type: DataTypes.INTEGER, primaryKey: true, unique: true, allowNull: false },
-    displayName: { type: DataTypes.STRING, allowNull: false },
+    googleId: { type: DataTypes.STRING, primaryKey: true, unique: true, allowNull: false },
+    username: { type: DataTypes.STRING, allowNull: false },
     email: { type: DataTypes.STRING, unique: true, allowNull: false },
     photo: { type: DataTypes.STRING, allowNull: false },
     role: { type: DataTypes.STRING, defaultValue: 'USER' }
@@ -26,23 +26,20 @@ const Category = sequelize.define('category', {
 
 const Order = sequelize.define('order', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.STRING },
     addressId: { type: DataTypes.INTEGER, allowNull: false }
 });
 
 const OrderItem = sequelize.define('order_item', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    orderId: { type: DataTypes.INTEGER, allowNull: false },
-    productId: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.INTEGER, allowNull: false },
     price: { type: DataTypes.INTEGER, allowNull: false }
 });
 
 const Payment = sequelize.define('payment', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    orderId: { type: DataTypes.INTEGER, allowNull: false },
-    methodId: { type: DataTypes.INTEGER, allowNull: false },
+    orderId:{ type: DataTypes.INTEGER, allowNull: false},
+    methodId: {type: DataTypes.INTEGER},
     status: { type: DataTypes.STRING },
     amount: { type: DataTypes.INTEGER, allowNull: false }
 });
@@ -54,38 +51,36 @@ const PaymentMethod = sequelize.define('payment_method', {
 
 const Address = sequelize.define('address', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: { type: DataTypes.INTEGER, allowNull: false },
     street: { type: DataTypes.STRING },
     city: { type: DataTypes.STRING },
     state: { type: DataTypes.STRING },
     zipCode: { type: DataTypes.STRING },
-    country: { type: DataTypes.STRING }
+    country: { type: DataTypes.STRING },
+    userId: { type: DataTypes.STRING, allowNull: false }
 });
 
 const Cart = sequelize.define('cart', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: { type: DataTypes.INTEGER, allowNull: false }
+    userId: { type: DataTypes.STRING, allowNull: false }
 });
 
 const Favourite = sequelize.define('favourite', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    userId: { type: DataTypes.INTEGER, allowNull: false }
+    userId: { type: DataTypes.STRING, allowNull: false }
 });
 
 const CartProduct = sequelize.define('cart_product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     productId: { type: DataTypes.INTEGER, allowNull: false },
-    cartId: { type: DataTypes.INTEGER, allowNull: false },
     quantity: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 }
 });
 
 const FavouriteProduct = sequelize.define('favourite_product', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    productId: { type: DataTypes.INTEGER, allowNull: false },
-    favouriteId: { type: DataTypes.INTEGER, allowNull: false }
+    productId: { type: DataTypes.INTEGER, allowNull: false }
 });
 
-// Устанавливаем связи между моделями
+
 User.hasMany(Order, { foreignKey: 'userId' });
 Order.belongsTo(User, { foreignKey: 'userId' });
 
@@ -122,7 +117,7 @@ FavouriteProduct.belongsTo(Favourite, { foreignKey: 'favouriteId' });
 Product.hasMany(FavouriteProduct, { foreignKey: 'productId' });
 FavouriteProduct.belongsTo(Product, { foreignKey: 'productId' });
 
-Payment.belongsTo(PaymentMethod, { foreignKey: 'methodId' });
+Payment.belongsTo(PaymentMethod, { foreignKey: 'methodId',  onDelete: 'CASCADE', onUpdate: 'CASCADE' });
 PaymentMethod.hasMany(Payment, { foreignKey: 'methodId' });
 
 module.exports = {
@@ -139,3 +134,4 @@ module.exports = {
     Payment,
     PaymentMethod
 };
+

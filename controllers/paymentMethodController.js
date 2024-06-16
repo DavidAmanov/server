@@ -14,8 +14,8 @@ class PaymentMethodController{
 
     async remove(req, res, next){
         try{
-            const {name} = req.body
-            const paymentMethod = await PaymentMethod.findOne({where:{name:name}})
+            const {id} = req.body
+            const paymentMethod = await PaymentMethod.findOne({where:{id:id}})
             await paymentMethod.destroy()
             return res.json({messsage: "Method removed"})
         } catch(e){

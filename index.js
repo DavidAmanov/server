@@ -22,7 +22,12 @@ app.use(session({
     saveUninitialized: true
 }))
 
-app.use(cors())
+const corsOptions = {
+    origin: 'http://localhost:3001/api', 
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.static(path.resolve(__dirname, 'static')))
 app.use(passport.initialize())

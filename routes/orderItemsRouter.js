@@ -4,6 +4,6 @@ const orderItemsController = require('../controllers/orderItemsController')
 
 router.post('/add', orderItemsController.add)
 router.delete('/remove', orderItemsController.remove)
-router.get('/getItems', orderItemsController.getOrderItems)
+router.get('/getItem/:order_id', orderItemsController.getOrderItems)
 
 module.exports = router

@@ -6,11 +6,11 @@ const path = require('path')
 class ProductController {
     async create(req, res, next){
         try{
-            const {name, price, status, description} = req.body
+            const {name, price, status, description, categoryId} = req.body
             const {img} = req.files
             let fileName = uuid.v4() + ".jpg"
             img.mv(path.resolve(__dirname, '..', 'static', fileName))
-            const product = await Product.create({name, price, status, description, img: fileName})
+            const product = await Product.create({name, price, status, description, img: fileName, categoryId})
             return res.json(product)
         } catch (e) {
             next(ApiError.badRequest(e.message))

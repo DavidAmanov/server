@@ -5,7 +5,7 @@ class AddressController {
     async add(req,res,next){
         try{
             const {user_id, street, city, state, zip_code, country} = req.body
-            const user = await User.findOne({where:{userId: user_id}})
+            const user = await User.findOne({where:{googleId: user_id}})
             if(!user){
                 return next(ApiError.badRequest("User not found"))
             }
@@ -13,7 +13,7 @@ class AddressController {
                 street:street,
                 city:city,
                 state:state,
-                zip_code:zip_code,
+                zipCode:zip_code,
                 country:country})
             return res.json(address)
         }catch(e){
