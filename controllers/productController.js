@@ -17,6 +17,17 @@ class ProductController {
         }
     }
 
+    async remove(req,res,next){
+        try{
+            const {product_id} = req.body
+            const product = await Product.findOne({where:{id: product_id}})
+            await product.destroy()
+            return req.json({message: "Product was removed"})
+        } catch(e){
+            return next(ApiError.badRequest(e.message))
+        }
+    }
+
     async getAll(req, res){
         const products = await Product.findAll()
         return res.json(products)

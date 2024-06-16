@@ -68,35 +68,7 @@
         "description": "Initiates Google OAuth2 authentication",
         "responses": {
           "302": {
-            "description": "Redirect to Google OAuth2 authentication page"
-          }
-        }
-      }
-    },
-    "/user/auth/google/callback": {
-      "get": {
-        "tags": ["User"],
-        "summary": "Google OAuth2 Callback",
-        "description": "Handles the callback from Google OAuth2 authentication",
-        "responses": {
-          "200": {
-            "description": "Successful authentication",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string",
-                      "example": "jwt-token"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "302": {
-            "description": "Redirect on failure"
+            "description": "Not working here, pls use postman"
           }
         }
       }
@@ -210,6 +182,62 @@
           }
         }
       }
+    },
+    "/product/remove":{
+      "delete": {
+        "tags": ["Product"],
+        "summary": "Delete a product",
+        "description": "Delete a product. Only accessible by admin.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "product_id": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                },
+                "required": ["product_id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "product removed successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Product removed from database"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      } 
     },
     "/product": {
       "get": {
@@ -499,12 +527,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Credit Card"
+                  "id": {
+                    "type": "integer",
+                    "example": 1
                   }
                 },
-                "required": ["name"]
+                "required": ["id"]
               }
             }
           }
@@ -584,7 +612,7 @@
                 "properties": {
                   "user_id": {
                     "type": "string",
-                    "example": "user123"
+                    "example": "115541713904561796320"
                   },
                   "status": {
                     "type": "string",
@@ -640,7 +668,7 @@
                     "example": 1
                   },
                   "user_id": {
-                    "type": "string",
+                    "type": "115541713904561796320",
                     "example": "user123"
                   },
                   "address_id": {
@@ -867,7 +895,7 @@
         }
       }
     },
-    "/orderItem/getItems/{order_id}": {
+    "/orderItem/getItem/{order_id}": {
       "get": {
         "tags": ["Order Items"],
         "summary": "Get items of an order",
@@ -910,7 +938,7 @@
         }
       }
     },
-    "/favourite": {
+    "/favourite/{user_id}": {
       "get": {
         "tags": ["Favourite"],
         "summary": "Get favourite list",
@@ -918,10 +946,11 @@
         "parameters": [
           {
             "name": "user_id",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
-              "type": "integer"
+              "type": "string",
+              "example": "115541713904561796320"
             },
             "description": "The ID of the user to retrieve the favourite list for"
           }
@@ -953,51 +982,6 @@
             "BearerAuth": []
           }
         ]
-      }
-    },
-    "/favourite/add": {
-      "post": {
-        "tags": ["Favourite"],
-        "summary": "Add to favourite list",
-        "description": "Adds a user to the favourite list.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "integer",
-                    "example": 1
-                  }
-                },
-                "required": ["user_id"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User added to favourite list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Favourites"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/favouriteProduct/add": {
@@ -1171,7 +1155,7 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": "Electronics"
+                    "example": "hoodie"
                   }
                 },
                 "required": ["name"]
@@ -1327,64 +1311,24 @@
         }
       }
     },
-    "/cart/create": {
-      "post": {
-        "tags": ["Cart"],
-        "summary": "Create cart",
-        "description": "Creates a new cart for a user.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "user_id": {
-                    "type": "integer",
-                    "example": 1
-                  }
-                },
-                "required": ["user_id"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Cart created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/cart/getCart/{user_id}": {
       "get": {
         "tags": ["Cart"],
         "summary": "Get user's cart",
         "description": "Retrieves the cart of a specific user.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "name": "user_id",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "example": 1
+              "type": "string",
+              "example": "115541713904561796320"
             },
             "description": "The ID of the user to retrieve the cart for."
           }
@@ -1494,6 +1438,10 @@
                   "product_id": {
                     "type": "integer",
                     "example": 1
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 1
                   }
                 },
                 "required": ["cart_id", "product_id"]
@@ -1598,7 +1546,7 @@
                 "properties": {
                   "user_id": {
                     "type": "string",
-                    "example": 1
+                    "example": "115541713904561796320"
                   },
                   "street": {
                     "type": "string",
@@ -1612,7 +1560,7 @@
                     "type": "string",
                     "example": "State"
                   },
-                  "zipCode": {
+                  "zip_code": {
                     "type": "string",
                     "example": "12345"
                   },
@@ -1669,11 +1617,11 @@
                 "properties": {
                   "address_id": {
                     "type": "integer",
-                    "example": 1
+                    "example": 3
                   },
                   "user_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "115541713904561796320"
                   }
                 },
                 "required": ["address_id", "user_id"]
@@ -1941,7 +1889,7 @@
             },
             "userId": {
               "type": "string",
-              "example": "user123"
+              "example": "115541713904561796320"
             },
             "street": {
               "type": "string",

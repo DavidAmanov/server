@@ -4,6 +4,7 @@ const productController = require('../controllers/productController')
 const checkRole = require('../middleware/checkRoleMiddleware')
 
 router.post('/create', checkRole('ADMIN'), productController.create)
+router.delete('/remove', checkRole('ADMIN'), productController.remove)
 router.get('/', productController.getAll) 
 router.get('/:id', productController.getOneById)
 
