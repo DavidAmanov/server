@@ -11,7 +11,8 @@ class ProductController {
             let fileName = uuid.v4() + ".jpg"
             img.mv(path.resolve(__dirname, '..', 'static', fileName))
             const product = await Product.create({name, price, status, description, img: fileName, categoryId})
-            return res.json(product)
+            const imgURL = `${req.protocol}://${req.get('host')}/static/${fileName}`
+            return res.json({ ...product.toJSON(), img: imgURL })
         } catch (e) {
             next(ApiError.badRequest(e.message))
         }

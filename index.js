@@ -23,13 +23,13 @@ app.use(session({
 }))
 
 const corsOptions = {
-    origin: 'http://localhost:3001/api', 
+    origin: 'http://localhost:3001', 
     optionsSuccessStatus: 200
 };
 
-app.use(cors(corsOptions))
+app.use(cors())
 app.use(express.json())
-app.use(express.static(path.resolve(__dirname, 'static')))
+app.use('/static', express.static(path.resolve(__dirname, 'static')));
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(fileUpLoad({}))

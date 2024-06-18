@@ -5,7 +5,7 @@ module.exports = new Sequelize(
     process.env.DB_USER,
     process.env.DB_PASSWORD,
     {
-        dialect: 'mysql', //change to postgresql on localhost
+        dialect: 'postgresql', //change to postgresql on localhost
         host: process.env.DB_HOST,
         port: process.env.DB_PORT
     }
