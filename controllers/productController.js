@@ -29,17 +29,24 @@ class ProductController {
         }
     }
 
-    async getAll(req, res){
-        const products = await Product.findAll()
-        return res.json(products)
+    async getAll(req, res) {
+        const products = await Product.findAll();
+        const productsWithUrls = products.map(product => {
+            const imgURL = `${req.protocol}://${req.get('host')}/static/${product.img}`;
+            return { ...product.toJSON(), img: imgURL };
+        });
+        return res.json(productsWithUrls);
     }
 
-    async getOneById(req, res){
-        let {id} = req.params
-        const product = await Product.findOne({
-            where: {id}
-        })
-        return res.json(product)
+    async getOneById(req, res) {
+        let { id } = req.params;
+        const product = await Product.findOne({ where: { id } });
+        if (product) {
+            const imgURL = `${req.protocol}://${req.get('host')}/static/${product.img}`;
+            return res.json({ ...product.toJSON(), img: imgURL });
+        } else {
+            return res.status(404).json({ message: "Product not found" });
+        }
     }
 }
 

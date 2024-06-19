@@ -2,7 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User, Cart } = require('./models/models');
 
-const adminEmails = [process.env.ADMIN1, process.env.ADMIN2];
+const adminEmails = [process.env.ADMIN1, process.env.ADMIN2, process.env.ADMIN3];
 
 passport.serializeUser((user, done) => {
     done(null, user.googleId);
