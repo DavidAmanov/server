@@ -35,8 +35,23 @@ class CartProductController {
         try{
             const {cart_Id} = req.params
             const cartProduct = await CartProduct.findAll({where:{cartId: cart_Id}, include: [Product]})
-            return res.json(cartProduct)
+            const products = cartProduct.map((item)=>{
+                item.product.img = `${req.protocol}://${req.get('host')}/static/${item.product.img}`;
+                return item
+        })
+        return res.json(products)
         } catch (e){
+            next(ApiError.badRequest(e.message))
+        }
+    }
+
+    async changeProductQuantity(req, res, next){
+        try{
+            const {cart_id, product_id, quantity} = req.params
+            const cartProduct = await CartProduct.findOne({where:{cartId: cart_id, productId: product_id}})
+            cartProduct.quantity = quantity
+            return res.json(cartProduct)
+        } catch(e){
             next(ApiError.badRequest(e.message))
         }
     }

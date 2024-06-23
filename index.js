@@ -1,4 +1,5 @@
 require("dotenv").config()
+const cookieParser = require('cookie-parser');
 const express = require('express')
 const passport = require('./auth.js')
 const session = require('express-session')
@@ -19,15 +20,17 @@ const app = express();
 app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { secure: false,  maxAge: 24 * 60 * 60 * 1000 }
 }))
 
 const corsOptions = {
-    origin: 'http://localhost:3001', 
-    optionsSuccessStatus: 200
+    origin: 'http://localhost:3000', 
+    credentials: true,
 };
 
-app.use(cors())
+app.use(cors(corsOptions))
+app.use(cookieParser());
 app.use(express.json())
 app.use('/static', express.static(path.resolve(__dirname, 'static')));
 app.use(passport.initialize())

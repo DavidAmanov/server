@@ -17,6 +17,19 @@ class CartController {
         const cart = await Cart.findOne({where: {userId: user_id}})
         return res.json(cart)
     }
+
+    async getCartId(req, res, next) {
+        try {
+            const userId = req.user.id; 
+            const cart = await Cart.findOne({ where: { userId } });
+            if (!cart) {
+                return next(ApiError.notFound('Cart not found'));
+            }
+            return res.json({ cart_id: cart.id });
+        } catch (e) {
+            next(ApiError.badRequest(e.message));
+        }
+    }
 }
 
 module.exports = new CartController()

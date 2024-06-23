@@ -16,11 +16,11 @@ passport.deserializeUser(async (id, done) => {
         done(err);
     }
 });
-
+//'http://localhost:3001/api/user/auth/google/callback' "http://localhost:3000/"
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3001/api/user/auth/google/callback',
+    callbackURL:  'http://localhost:3001/api/user/auth/google/callback' ,
     passReqToCallback: true
 },
 async function(request, accessToken, refreshToken, profile, done) {
@@ -35,7 +35,7 @@ async function(request, accessToken, refreshToken, profile, done) {
                 photo: profile.photos[0].value,
                 role: isAdmin ? 'ADMIN' : 'USER'
             });
-            await Cart.create({ user_id: user.id });
+            await Cart.create({ userId: user.id });
         }
         return done(null, user);
     } catch (error) {

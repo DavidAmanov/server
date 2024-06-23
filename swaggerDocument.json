@@ -61,6 +61,60 @@
         }
     ],
     "paths": {
+    "/user/get": {
+      "get" : {
+        "tags": ["User"],
+        "summary": "Get user data",
+        "description": "Get user data by JWT",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+"responses": {
+      "200": {
+        "description": "User data retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "photo": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["username", "email", "photo", "role"]
+                },
+                "cart_id": {
+                  "type": "number"
+                },
+                "favourite_id": {
+                  "type": "number"
+                }
+              },
+              "required": ["token", "user", "cart_id", "favourite_id"]
+            }
+          }
+        }
+      }
+    }
+  }
+},
     "/user/auth/google": {
       "get": {
         "tags": ["User"],
