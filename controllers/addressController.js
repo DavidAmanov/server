@@ -9,13 +9,17 @@ class AddressController {
             if(!user){
                 return next(ApiError.badRequest("User not found"))
             }
-            const address = await Address.create({userId:user_id, 
+            const address = await Address.findOrCreate({
+                where: {userId: user_id, street: street, city: city},
+                defaults:{
+                userId:user_id, 
                 street:street,
                 city:city,
                 state:state,
                 zipCode:zip_code,
-                country:country})
-            return res.json(address)
+                country:country
+            }})
+            return res.json(address)         
         }catch(e){
             next(ApiError.badRequest(e.message))
         }

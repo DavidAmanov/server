@@ -45,10 +45,11 @@ class UserController {
                         favourite = await Favourite.create({ userId: user.googleId });
                     }
 
-                    const token = generateJwt(user.googleId, user.email, user.role);
+                    const accessToken = generateJwt(user.googleId, user.email, user.role, '1d');
+                    const refreshToken = generateJwt(user.googleId, user.email, user.role, '7d')
 
-                    res.cookie('token', token, { httpOnly: false, secure: false, sameSite: 'Strict' });
-
+                    res.cookie('accessToken', accessToken, { httpOnly: false, secure: false, sameSite: 'Strict' });
+                    res.cookie('refreshToken', refreshToken, { httpOnly: false, secure: false, sameSite: 'Strict' });
                     return res.redirect('http://localhost:3000/profile');
                 } catch (error) {
                     return next(ApiError.internal(error.message));
@@ -60,7 +61,7 @@ class UserController {
     async getUserData(req, res, next) {
         try {
             // const token = req.headers.authorization.split(' ')[1];
-            const token = req.cookies.token;
+            const token = req.cookies.accessToken;
     
             if (!token) {
                 return next(ApiError.badRequest('No token provided'));
@@ -104,22 +105,31 @@ class UserController {
     
 
     async refreshToken(req, res, next) {
+        const refreshToken  = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: 'Токен не предоставлен' });
+        }
+    
         try {
-            const oldRefreshToken = req.cookies.refreshToken;
-            if (!oldRefreshToken) {
-                return next(ApiError.badRequest('No refresh token provided'));
+            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+            const user = await User.findOne({ where: { googleId: decoded.id } });
+    
+            if (!user) {
+                return res.status(401).json({ message: 'Пользователь не найден' });
             }
-
-            const decoded = jwt.verify(oldRefreshToken, process.env.SECRET_KEY, { ignoreExpiration: true });
-            const newAccessToken = generateJwt(decoded.id, decoded.email, decoded.role);
-
-            res.cookie('token', newAccessToken, { httpOnly: true, secure: false, sameSite: 'Lax' });
-            return res.json({ token: newAccessToken });
+    
+            const newAccessToken = generateJwt(user.googleId, user.email, user.role, '1d');
+            const newRefreshToken = generateJwt(user.googleId, user.email, user.role, '7d');
+    
+            res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
+    
+            return res.json({ accessToken: newAccessToken });
         } catch (error) {
-            return next(ApiError.badRequest('Failed to refresh token'));
+            return next(ApiError.internal('Ошибка при обновлении токена'));
         }
     }
-}
-
+}   
 module.exports = new UserController();
 

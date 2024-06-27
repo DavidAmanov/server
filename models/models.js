@@ -80,6 +80,16 @@ const FavouriteProduct = sequelize.define('favourite_product', {
     productId: { type: DataTypes.INTEGER, allowNull: false }
 });
 
+const Recipient = sequelize.define('recipient', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    orderId: {type: DataTypes.INTEGER, allowNull: false },
+    name: {type: DataTypes.STRING, allowNull: false},
+    lastName: {type: DataTypes.STRING, allowNull: false},
+    mobilePhone: {type: DataTypes.STRING, allowNull: false},
+    email: {type: DataTypes.STRING, allowNull: false},
+    comment: {type: DataTypes.STRING},
+})
+
 
 User.hasMany(Order, { foreignKey: 'userId' });
 Order.belongsTo(User, { foreignKey: 'userId' });
@@ -92,6 +102,9 @@ OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
 
 Order.hasOne(Payment, { foreignKey: 'orderId' });
 Payment.belongsTo(Order, { foreignKey: 'orderId' });
+
+Order.hasOne(Recipient, {foreignKey: 'orderId'});
+Recipient.belongsTo(Order, {foreignKey: 'orderId'})
 
 Product.hasMany(OrderItem, { foreignKey: 'productId' });
 OrderItem.belongsTo(Product, { foreignKey: 'productId' });
@@ -132,6 +145,7 @@ module.exports = {
     Address,
     Category,
     Payment,
-    PaymentMethod
+    PaymentMethod,
+    Recipient
 };
 

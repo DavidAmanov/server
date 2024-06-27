@@ -9,6 +9,12 @@ class CartProductController {
             if (!cart) {
                 return next(ApiError.badRequest('Cart not found'));
             }
+            const cartProductChangeQua = await CartProduct.findOne({where:{cartId: cart_id, productId: product_id}})
+            if(cartProductChangeQua){
+                cartProductChangeQua.quantity = cartProductChangeQua.quantity + quantity
+                await cartProductChangeQua.save()
+                return res.json(cartProductChangeQua)
+            }
             const product = await Product.findOne({where: {id: product_id}})
             if (!product) {
                 return next(ApiError.badRequest('Product not found'));
