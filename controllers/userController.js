@@ -48,9 +48,11 @@ class UserController {
                     const accessToken = generateJwt(user.googleId, user.email, user.role, '1d');
                     const refreshToken = generateJwt(user.googleId, user.email, user.role, '7d')
 
-                    res.cookie('accessToken', accessToken, { httpOnly: false, secure: false, sameSite: 'Strict' });
-                    res.cookie('refreshToken', refreshToken, { httpOnly: false, secure: false, sameSite: 'Strict' });
-                    return res.redirect('http://localhost:3000/profile');
+                    return res.json({
+                        accessToken,
+                        refreshToken,
+                        redirectUrl: 'http://localhost:3000/profile'
+                    });
                 } catch (error) {
                     return next(ApiError.internal(error.message));
                 }
@@ -60,8 +62,8 @@ class UserController {
 
     async getUserData(req, res, next) {
         try {
-            // const token = req.headers.authorization.split(' ')[1];
-            const token = req.cookies.accessToken;
+            const token = req.headers.authorization.split(' ')[1];
+            // const token = req.cookies.accessToken;
     
             if (!token) {
                 return next(ApiError.badRequest('No token provided'));
@@ -122,10 +124,10 @@ class UserController {
             const newAccessToken = generateJwt(user.googleId, user.email, user.role, '1d');
             const newRefreshToken = generateJwt(user.googleId, user.email, user.role, '7d');
     
-            res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
-            res.cookie('refreshToken', newRefreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' });
-    
-            return res.json({ accessToken: newAccessToken });
+            return res.json({
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken
+            });
         } catch (error) {
             return next(ApiError.internal('Ошибка при обновлении токена'));
         }

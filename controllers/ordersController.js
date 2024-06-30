@@ -101,10 +101,10 @@ class OrdersController {
         }
     }
 
-    async getOneById(req, res, next){
+    async getOrdersByUserId(req, res, next){
         try{
-            let {id} = req.params
-            const order = await Order.findOne({where: {id}})
+            let {user_id} = req.params
+            const order = await Order.findAll({where: {userId: user_id}})
             return res.json(order)
         } catch(e) {
             return next(ApiError.badRequest(e.message))

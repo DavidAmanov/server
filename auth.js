@@ -35,7 +35,7 @@ async function(request, accessToken, refreshToken, profile, done) {
                 photo: profile.photos[0].value,
                 role: isAdmin ? 'ADMIN' : 'USER'
             });
-            await Cart.create({ userId: user.id });
+            await Cart.create({ userId: user.googleId});
         }
         return done(null, user);
     } catch (error) {

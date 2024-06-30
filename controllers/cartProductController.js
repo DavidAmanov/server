@@ -45,6 +45,7 @@ class CartProductController {
                 item.product.img = `${req.protocol}://${req.get('host')}/static/${item.product.img}`;
                 return item
         })
+        
         return res.json(products)
         } catch (e){
             next(ApiError.badRequest(e.message))
